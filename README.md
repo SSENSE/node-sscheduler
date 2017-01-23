@@ -113,7 +113,7 @@ The possible options for the **getAvailability** function are:
 
 Using the same example as before, let's say that we also need to book a room for our appointment.
 
-So, we will need to intersect the doctor's availability times and the room's availability times, considering that:
+So, we need to intersect the doctor's availability times with the room's availability times, considering that:
 
   * We can only book the room on weekdays from *8AM* to *8PM*
 
