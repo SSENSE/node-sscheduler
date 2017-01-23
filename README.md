@@ -1,0 +1,120 @@
+# sscheduler
+
+[![Build Status](https://travis-ci.org/SSENSE/node-sscheduler.svg?branch=master)](https://travis-ci.org/SSENSE/node-sscheduler)
+[![Coverage Status](https://coveralls.io/repos/github/SSENSE/node-sscheduler/badge.svg?branch=master)](https://coveralls.io/github/SSENSE/node-sscheduler?branch=master)
+[![Latest Stable Version](https://img.shields.io/npm/v/@ssense/sscheduler.svg)](https://www.npmjs.com/package/@ssense/sscheduler)
+[![Known Vulnerabilities](https://snyk.io/test/npm/@ssense/sscheduler/badge.svg)](https://snyk.io/test/npm/@ssense/sscheduler)
+
+Flexible scheduler to find free time slots in the schedule of a resource (which could be a person, a meeting room, a car, etc...)
+
+**scheduler** can also intersect the availability of multiple resources in order to find the time slots at which all the resources are available.
+
+## Installation
+
+```bash
+npm install @ssense/sscheduler
+```
+
+## Basic usage
+
+As an example, let's say that we want to book a 1 hour appointment with a doctor in the month of february considering that:
+
+  * We can only book on weekdays from 9AM to 5PM
+
+  * We can't book between noon and 1PM (lunch time !)
+
+  * The doctor is on vacation the week of the 20th
+
+  * There are already two one-hour appointments booked on February 1st at 1PM and 2PM
+
+```javascript
+import {Scheduler} from '@ssense/sscheduler';
+
+const scheduler = new Scheduler();
+const availability = scheduler.getAvailability({
+    from: '2017-02-01',
+    to: '2017-03-01',
+    duration: 60,
+    interval: 60,
+    schedule: {
+        weekdays: {
+            from: '09:00', to: '17:00',
+            unavailability: [
+                { from: '12:00', to: '13:00' }
+            ]
+        },
+        unavailability: [
+            { from: '2017-02-20 00:00', to: '2017-02-27 00:00' }
+        ]
+    },
+    allocated: [
+        { from: '2017-02-01 13:00' , duration: 60 },
+        { from: '2017-02-01 14:00' , duration: 60 }
+    ]
+});
+```
+
+# Options
+
+The possible options  for the **getAvailability** function are:
+
+<details>
+ <summary>from (required)</summary>
+ The start date for which we want to get availability times
+
+ <summary>to (required)</summary>
+ The end date for which we want to get availability times (exclusive)
+
+ <summary>interval (required)</summary>
+ The interval (in minutes) of the returned availability times.
+ For example, a value of 15 would returns availability times such as 10:00, 10:15, 10:30, 10:45, etc..
+
+ <summary>duration (required)</summary>
+ The duration (in minutes) for which we need the resource.
+
+ <summary>schedule (required)</summary>
+ The schedule of the resource for each day of the week.
+
+ Example:
+ ```js
+ {
+   monday: {
+     from: '09:00',
+     to: '17:00',
+     unavailability: [
+       { from: '12:00', to: '13:00' }
+     ]
+   },
+ }
+ ```
+
+ <summary>allocated (optional)</summary>
+ The list of the already-allocated time slots for the resource.
+
+ Example:
+ ```js
+ [
+   { from: '09:00', duration: 60 }
+ ]
+ ```
+</details>
+
+## Schedule intersection
+
+Using the same example as before, let's say that we also need to book a room for our appointment.
+
+So, we will need to intersect the doctor's availability times and the room's availability times, considering that:
+
+  * We can only book the room on weekdays from 8AM to 8PM
+
+  * The room is out of service from February 6 to February 16
+
+@todo
+
+## Authors
+
+* **Mickael Burguet** - *Senior Developer* - [rundef](http://rundef.com)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
