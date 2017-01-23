@@ -20,11 +20,11 @@ export class Scheduler {
             to: moment(schedule.to, 'HH:mm')
         };
 
-        if (!s.from.isValid()) {
+        if (! (<moment.Moment> s.from).isValid()) {
             throw new Error('"from" must be a time in the format HH:mm');
-        } else if (!s.to.isValid()) {
+        } else if (! (<moment.Moment> s.to).isValid()) {
             throw new Error('"to" must be a time in the format HH:mm');
-        } else if (!s.to.isAfter(s.from)) {
+        } else if (! (<moment.Moment> s.to).isAfter(s.from)) {
             throw new Error('"to" must be greater than "from"');
         }
 
@@ -241,7 +241,7 @@ export class Scheduler {
         this.validateAndCastParams(p);
 
         const response: Availability = {};
-        const curDate = this.params.from.clone();
+        const curDate = (<moment.Moment> this.params.from).clone();
 
         // Loop on each day from <curDate> to <toDate>
         while (curDate.isBefore(this.params.to)) {
@@ -257,12 +257,12 @@ export class Scheduler {
                 const daySchedule: Schedule = (<any> this.params.schedule)[dayName] || (<any> this.params.schedule).weekdays;
                 const dayAvailability: string[] = [];
 
-                const timeSlotStart = daySchedule.from.clone().year(curDate.year()).dayOfYear(curDate.dayOfYear());
+                const timeSlotStart = (<moment.Moment> daySchedule.from).clone().year(curDate.year()).dayOfYear(curDate.dayOfYear());
 
                 // Loop from <curTime> to <endTime> in <interval> increments
-                while (this.isTimeBefore(timeSlotStart, daySchedule.to)) {
+                while (this.isTimeBefore(timeSlotStart, (<moment.Moment> daySchedule.to))) {
                     const timeSlotEnd = timeSlotStart.clone().add({ minutes: this.params.duration });
-                    if (this.isTimeAfter(timeSlotEnd, daySchedule.to)) {
+                    if (this.isTimeAfter(timeSlotEnd, (<moment.Moment> daySchedule.to))) {
                         break;
                     }
                     let isAvailable = true;

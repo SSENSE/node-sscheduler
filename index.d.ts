@@ -1,4 +1,4 @@
-import {Moment} from 'moment';
+import * as moment from 'moment';
 
 interface WeeklySchedule {
     sunday?: Schedule;
