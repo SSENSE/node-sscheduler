@@ -109,7 +109,45 @@ So, we will need to intersect the doctor's availability times and the room's ava
 
   * The room is out of service from February 6 to February 16
 
-@todo
+```javascript
+import {Scheduler} from '@ssense/sscheduler';
+
+const scheduler = new Scheduler();
+const availability = scheduler.getIntersection({
+    from: '2017-02-01',
+    to: '2017-03-01',
+    duration: 60,
+    interval: 60,
+    schedules: [
+        // The doctor's schedule
+        {
+            weekdays: {
+                from: '09:00', to: '17:00',
+                unavailability: [
+                    { from: '12:00', to: '13:00' }
+                ]
+            },
+            unavailability: [
+                { from: '2017-02-20 00:00', to: '2017-02-27 00:00' }
+            ]
+        },
+
+        // The room's schedule
+        {
+            weekdays: {
+                from: '08:00', to: '20:00',
+            },
+            unavailability: [
+                { from: '2017-02-06 00:00', to: '2017-02-16 00:00' }
+            ]
+        }
+    ],
+    allocated: [
+        { from: '2017-02-01 13:00' , duration: 60 },
+        { from: '2017-02-01 14:00' , duration: 60 }
+    ]
+});
+```
 
 ## Authors
 
