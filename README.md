@@ -61,17 +61,25 @@ The possible options  for the **getAvailability** function are:
 <details>
  <summary>from (required)</summary>
  The start date for which we want to get availability times
+</details>
 
+<details>
  <summary>to (required)</summary>
  The end date for which we want to get availability times (exclusive)
+</details>
 
+<details>
  <summary>interval (required)</summary>
  The interval (in minutes) of the returned availability times.
  For example, a value of 15 would returns availability times such as 10:00, 10:15, 10:30, 10:45, etc..
+</details>
 
+<details>
  <summary>duration (required)</summary>
  The duration (in minutes) for which we need the resource.
+</details>
 
+<details>
  <summary>schedule (required)</summary>
  The schedule of the resource for each day of the week.
 
@@ -87,7 +95,9 @@ The possible options  for the **getAvailability** function are:
    },
  }
  ```
+</details>
 
+<details>
  <summary>allocated (optional)</summary>
  The list of the already-allocated time slots for the resource.
 
