@@ -7,7 +7,7 @@
 
 Flexible scheduler to find free time slots in the schedule of a resource (which could be a person, a meeting room, a car, etc...)
 
-**scheduler** can also intersect the availability of multiple resources in order to find the time slots at which all the resources are available.
+**sscheduler** can also intersect the availability of multiple resources in order to find the time slots at which all the resources are available.
 
 ## Installation
 
@@ -19,13 +19,13 @@ npm install @ssense/sscheduler
 
 As an example, let's say that we want to book a 1 hour appointment with a doctor in the month of february considering that:
 
-  * We can only book on weekdays from 9AM to 5PM
+  * We can only book on weekdays from *9AM* to *5PM*
 
-  * We can't book between noon and 1PM (lunch time !)
+  * We can't book between noon and *1PM* (lunch time !)
 
-  * The doctor is on vacation the week of the 20th
+  * The doctor is on vacation the week of the *20th*
 
-  * There are already two one-hour appointments booked on February 1st at 1PM and 2PM
+  * There are already two one-hour appointments booked on *February 1st* at *1PM* and *2PM*
 
 ```javascript
 import {Scheduler} from '@ssense/sscheduler';
@@ -56,7 +56,7 @@ const availability = scheduler.getAvailability({
 
 # Options
 
-The possible options  for the **getAvailability** function are:
+The possible options for the **getAvailability** function are:
 
 <details>
  <summary>from (required)</summary>
@@ -71,7 +71,7 @@ The possible options  for the **getAvailability** function are:
 <details>
  <summary>interval (required)</summary>
  The interval (in minutes) of the returned availability times.
- For example, a value of 15 would returns availability times such as 10:00, 10:15, 10:30, 10:45, etc..
+ For example, a value of 15 would returns availability times such as *10:00*, *10:15*, *10:30*, *10:45*, etc..
 </details>
 
 <details>
@@ -115,9 +115,9 @@ Using the same example as before, let's say that we also need to book a room for
 
 So, we will need to intersect the doctor's availability times and the room's availability times, considering that:
 
-  * We can only book the room on weekdays from 8AM to 8PM
+  * We can only book the room on weekdays from *8AM* to *8PM*
 
-  * The room is out of service from February 6 to February 16
+  * The room is out of service from *February 6th* to *February 16th*
 
 ```javascript
 import {Scheduler} from '@ssense/sscheduler';
