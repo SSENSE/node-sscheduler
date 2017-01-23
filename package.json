@@ -1,5 +1,5 @@
 {
-  "name": "ssense-scheduler",
+  "name": "@ssense/scheduler",
   "version": "1.0.0",
   "description": "Flexible scheduler to find free time slots in the schedule of a resource",
   "main": "./dist/index.js",
@@ -25,6 +25,9 @@
     "time-slot"
   ],
   "author": "Mickael Burguet <www.rundef.com>",
+  "publishConfig": {
+    "access": "public"
+  },
   "license": "MIT",
   "engines": {
     "node": ">= 6.2.0",
