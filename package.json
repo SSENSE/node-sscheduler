@@ -1,5 +1,5 @@
 {
-  "name": "@ssense/scheduler",
+  "name": "@ssense/sscheduler",
   "version": "1.0.0",
   "description": "Flexible scheduler to find free time slots in the schedule of a resource",
   "main": "./dist/index.js",
