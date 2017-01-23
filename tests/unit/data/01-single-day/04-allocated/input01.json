@@ -1,0 +1,19 @@
+{
+    "schedule": {
+        "monday": {
+            "from": "11:00", "to": "16:00",
+            "unavailability": [
+                { "from": "12:00", "to": "13:00" },
+                { "from": "14:30", "to": "15:00" }
+            ]
+        }
+    },
+    "allocated": [
+        { "from": "2017-01-23 11:15", "duration": 15 },
+        { "from": "2017-01-23 13:15", "duration": 30 }
+    ],
+    "from": "2017-01-23",
+    "to": "2017-01-24",
+    "interval": 15,
+    "duration": 30
+}

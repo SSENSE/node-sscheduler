@@ -1,0 +1,42 @@
+{
+    "schedule": {
+        "monday": {
+            "from": "11:00", "to": "16:00",
+            "unavailability": [
+                { "from": "12:00", "to": "13:00" }
+            ]
+        },
+        "tuesday": {
+            "from": "11:00", "to": "16:00",
+            "unavailability": [
+                { "from": "12:00", "to": "13:00" }
+            ]
+        },
+        "wednesday": {
+            "from": "11:00", "to": "16:00",
+            "unavailability": [
+                { "from": "12:00", "to": "13:00" }
+            ]
+        },
+        "thursday": {
+            "from": "11:00", "to": "16:00",
+            "unavailability": [
+                { "from": "12:00", "to": "15:00" }
+            ]
+        },
+        "friday": {
+            "from": "11:00", "to": "16:00",
+            "unavailability": [
+                { "from": "12:00", "to": "13:00" }
+            ]
+        },
+        "unavailability": [
+            { "from": "2017-01-24 11:00", "to": "2017-01-26 11:00" },
+            { "from": "2017-01-27 13:00", "to": "2017-01-27 16:00" }
+        ]
+    },
+    "from": "2017-01-23",
+    "to": "2017-01-28",
+    "interval": 15,
+    "duration": 30
+}

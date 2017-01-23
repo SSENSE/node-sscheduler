@@ -1,0 +1,71 @@
+{
+  "name": "ssense-scheduler",
+  "version": "1.0.0",
+  "description": "Flexible scheduler to find free time slots in the schedule of a resource",
+  "main": "./dist/index.js",
+  "scripts": {
+    "compile": "rm -rf dist/* && tsc",
+    "lint": "tslint ./src/{,**/}*.ts ./tests/{,**/}*.ts --format verbose",
+    "test": "npm run test:unit",
+    "test:unit": "NODE_ENV=test mocha tests/unit --recursive --compilers ts:ts-node/register --bail",
+    "cover": "npm run cover:unit",
+    "cover:unit": "NODE_ENV=test nyc --report-dir tests/coverage/unit npm run test:unit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SSENSE/node-sscheduler.git"
+  },
+  "keywords": [
+    "scheduler",
+    "schedule",
+    "availability",
+    "appointment",
+    "booking",
+    "reservation",
+    "time-slot"
+  ],
+  "author": "Mickael Burguet <www.rundef.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 6.2.0",
+    "npm": ">= 3"
+  },
+  "dependencies": {
+    "lodash": "^4.13.1",
+    "moment": "^2.17.1"
+  },
+  "devDependencies": {
+    "@ssense/tslint-config": "^4.0.0",
+    "@types/chai": "^3.4.34",
+    "@types/lodash": "^4.14.50",
+    "@types/mocha": "^2.2.37",
+    "@types/node": "^7.0.0",
+    "chai": "^3.5.0",
+    "mocha": "^2.5.3",
+    "nyc": "^8.4.0",
+    "ts-node": "^1.6.1",
+    "tslint": "^4.3.1",
+    "typescript": "^2.1.5"
+  },
+  "nyc": {
+    "include": [
+      "src/*.ts"
+    ],
+    "exclude": [
+      "node_modules",
+      "index.d.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "json",
+      "html",
+      "lcov"
+    ],
+    "all": true
+  }
+}

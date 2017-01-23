@@ -1,0 +1,6 @@
+{
+    "extends": "@ssense/tslint-config",
+    "rules": {
+        "chai-vague-errors": false
+    }
+}
