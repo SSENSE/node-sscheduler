@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import {Scheduler} from '../../src/index';
+import {TimeAvailability} from '../../index.d';
 import * as fs from 'fs';
 import * as path from 'path';
 import {clone} from 'lodash';
@@ -15,18 +16,32 @@ const fileExists = (p: string): boolean => {
     }
 };
 
+const getAvailabilitiesAsStrings = (response: any): any => {
+    const availabilities: any = {};
+    for (const day of Object.keys(response)) {
+        const tmp: string[] = response[day].filter((el: TimeAvailability) => el.available)
+            .map((el: TimeAvailability) => el.time);
+        if (tmp.length) {
+            availabilities[day] = tmp;
+        }
+    }
+    return availabilities;
+};
+
 const runTest = (inputFilename: string, expectedFilename: string): void => {
     const input = JSON.parse(fs.readFileSync(inputFilename).toString());
     const expected = JSON.parse(fs.readFileSync(expectedFilename).toString());
 
-    expect(scheduler.getAvailability(input)).to.deep.equal(expected);
+    const response = scheduler.getAvailability(input);
+    expect(getAvailabilitiesAsStrings(response)).to.deep.equal(expected);
 };
 
 const runTestIntersect = (inputFilename: string, expectedFilename: string): void => {
     const input = JSON.parse(fs.readFileSync(inputFilename).toString());
     const expected = JSON.parse(fs.readFileSync(expectedFilename).toString());
 
-    expect(scheduler.getIntersection(input)).to.deep.equal(expected);
+    const response = scheduler.getIntersection(input);
+    expect(getAvailabilitiesAsStrings(response)).to.deep.equal(expected);
 };
 
 describe('getAvailability', () => {
@@ -202,6 +217,36 @@ describe('getAvailability', () => {
             .to.throw(Error, 'unavailability "to" must be greater than "from"');
         });
 
+        it('schedule allocated validation', () => {
+            expect(scheduler.getAvailability.bind(scheduler, {
+                from: '2017-01-23',
+                to: '2017-01-24',
+                schedule: {
+                    monday: { from: '09:00', to: '17:00' },
+                    allocated: [
+                        { from: 'test', duration: 60 }
+                    ]
+                },
+                interval: 30,
+                duration: 30
+            }))
+            .to.throw(Error, '"allocated.from" must be a date in the format YYYY-MM-DD HH:mm');
+
+            expect(scheduler.getAvailability.bind(scheduler, {
+                from: '2017-01-23',
+                to: '2017-01-24',
+                schedule: {
+                    monday: { from: '09:00', to: '17:00' },
+                    allocated: [
+                        { from: '2017-01-23 10:00', duration: -1 }
+                    ]
+                },
+                interval: 30,
+                duration: 30
+            }))
+            .to.throw(Error, '"allocated.duration" must be a positive integer');
+        });
+
         it('interval validation', () => {
             expect(scheduler.getAvailability.bind(scheduler, {
                 from: '2017-01-23',
@@ -248,36 +293,6 @@ describe('getAvailability', () => {
                 duration: -5
             }))
             .to.throw(Error, '"duration" must be a positive integer');
-        });
-
-        it('allocated validation', () => {
-            expect(scheduler.getAvailability.bind(scheduler, {
-                from: '2017-01-23',
-                to: '2017-01-24',
-                schedule: {
-                    monday: { from: '09:00', to: '17:00' }
-                },
-                allocated: [
-                    { from: 'test', duration: 60 }
-                ],
-                interval: 30,
-                duration: 30
-            }))
-            .to.throw(Error, '"allocated.from" must be a date in the format YYYY-MM-DD HH:mm');
-
-            expect(scheduler.getAvailability.bind(scheduler, {
-                from: '2017-01-23',
-                to: '2017-01-24',
-                schedule: {
-                    monday: { from: '09:00', to: '17:00' }
-                },
-                allocated: [
-                    { from: '2017-01-23 10:00', duration: -1 }
-                ],
-                interval: 30,
-                duration: 30
-            }))
-            .to.throw(Error, '"allocated.duration" must be a positive integer');
         });
     });
 

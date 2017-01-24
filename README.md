@@ -45,13 +45,26 @@ const availability = scheduler.getAvailability({
         },
         unavailability: [
             { from: '2017-02-20 00:00', to: '2017-02-27 00:00' }
+        ],
+        allocated: [
+          { from: '2017-02-01 13:00' , duration: 60 },
+          { from: '2017-02-01 14:00' , duration: 60 }
         ]
-    },
-    allocated: [
-        { from: '2017-02-01 13:00' , duration: 60 },
-        { from: '2017-02-01 14:00' , duration: 60 }
-    ]
+    }
 });
+```
+
+The returned value is a structure that looks like the following:
+
+```js
+{
+  '2017-02-01': [
+    { time: '09:00', available: true },
+    { time: '10:00', available: true }
+    // ...
+  ]
+  // ...
+}
 ```
 
 # Options
@@ -97,18 +110,6 @@ The possible options for the **getAvailability** function are:
  ```
 </details>
 
-<details>
- <summary>allocated (optional)</summary>
- The list of the already-allocated time slots for the resource.
-
- Example:
- ```js
- [
-   { from: '09:00', duration: 60 }
- ]
- ```
-</details>
-
 ## Schedule intersection
 
 Using the same example as before, let's say that we also need to book a room for our appointment.
@@ -139,6 +140,10 @@ const availability = scheduler.getIntersection({
             },
             unavailability: [
                 { from: '2017-02-20 00:00', to: '2017-02-27 00:00' }
+            ],
+            allocated: [
+              { from: '2017-02-01 13:00' , duration: 60 },
+              { from: '2017-02-01 14:00' , duration: 60 }
             ]
         },
 
@@ -151,10 +156,6 @@ const availability = scheduler.getIntersection({
                 { from: '2017-02-06 00:00', to: '2017-02-16 00:00' }
             ]
         }
-    ],
-    allocated: [
-        { from: '2017-02-01 13:00' , duration: 60 },
-        { from: '2017-02-01 14:00' , duration: 60 }
     ]
 });
 ```

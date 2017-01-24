@@ -1,5 +1,11 @@
 import * as moment from 'moment';
-import {AvailabilityParams, IntersectParams, Availability, Schedule} from '../index.d';
+import {
+    AvailabilityParams,
+    IntersectParams,
+    Availability,
+    TimeAvailability,
+    Schedule
+} from '../index.d';
 import {cloneDeep, omit} from 'lodash';
 
 export class Scheduler {
@@ -109,24 +115,8 @@ export class Scheduler {
             }
         }
 
-        if (isNaN(p.interval)) {
-            throw new Error('"interval" must be a positive integer');
-        }
-        p.interval = Math.floor(p.interval);
-        if (p.interval <= 0) {
-            throw new Error('"interval" must be a positive integer');
-        }
-
-        if (isNaN(p.duration)) {
-            throw new Error('"duration" must be a positive integer');
-        }
-        p.duration = Math.floor(p.duration);
-        if (p.duration <= 0) {
-            throw new Error('"duration" must be a positive integer');
-        }
-
-        if (p.allocated) {
-            for (const allocated of p.allocated) {
+        if (p.schedule.allocated) {
+            for (const allocated of p.schedule.allocated) {
                 allocated.from = moment(allocated.from, 'YYYY-MM-DD HH:mm');
                 if (!allocated.from.isValid()) {
                     throw new Error('"allocated.from" must be a date in the format YYYY-MM-DD HH:mm');
@@ -142,6 +132,22 @@ export class Scheduler {
                 const allocatedMinutes = p.interval * Math.ceil(allocated.duration / p.interval);
                 allocated.to = allocated.from.clone().add({ minutes: allocatedMinutes });
             }
+        }
+
+        if (isNaN(p.interval)) {
+            throw new Error('"interval" must be a positive integer');
+        }
+        p.interval = Math.floor(p.interval);
+        if (p.interval <= 0) {
+            throw new Error('"interval" must be a positive integer');
+        }
+
+        if (isNaN(p.duration)) {
+            throw new Error('"duration" must be a positive integer');
+        }
+        p.duration = Math.floor(p.duration);
+        if (p.duration <= 0) {
+            throw new Error('"duration" must be a positive integer');
         }
 
         this.params = p;
@@ -255,7 +261,7 @@ export class Scheduler {
                 )
             ) {
                 const daySchedule: Schedule = (<any> this.params.schedule)[dayName] || (<any> this.params.schedule).weekdays;
-                const dayAvailability: string[] = [];
+                const dayAvailability: TimeAvailability[] = [];
 
                 const timeSlotStart = (<moment.Moment> daySchedule.from).clone().year(curDate.year()).dayOfYear(curDate.dayOfYear());
 
@@ -263,7 +269,12 @@ export class Scheduler {
                 while (this.isTimeBefore(timeSlotStart, (<moment.Moment> daySchedule.to))) {
                     const timeSlotEnd = timeSlotStart.clone().add({ minutes: this.params.duration });
                     if (this.isTimeAfter(timeSlotEnd, (<moment.Moment> daySchedule.to))) {
-                        break;
+                        dayAvailability.push({
+                            time: timeSlotStart.format('HH:mm'),
+                            available: false
+                        });
+                        timeSlotStart.add({ minutes: this.params.interval });
+                        continue;
                     }
                     let isAvailable = true;
 
@@ -278,24 +289,23 @@ export class Scheduler {
                     }
 
                     // Verify that the resource is not allocated for the <curTime>
-                    if (isAvailable && this.params.allocated) {
-                        const allocatedToday = this.params.allocated.filter((a: any) => {
+                    if (isAvailable && this.params.schedule.allocated) {
+                        const allocatedToday = this.params.schedule.allocated.filter((a: any) => {
                             return a.from.year() === timeSlotStart.year() &&
                                 a.from.dayOfYear() === timeSlotStart.dayOfYear();
                         });
                         isAvailable = this.isTimeslotAvailable(timeSlotStart, timeSlotEnd, allocatedToday);
                     }
 
-                    if (isAvailable) {
-                        dayAvailability.push(timeSlotStart.format('HH:mm'));
-                    }
+                    dayAvailability.push({
+                        time: timeSlotStart.format('HH:mm'),
+                        available: isAvailable
+                    });
 
                     timeSlotStart.add({ minutes: this.params.interval });
                 }
 
-                if (dayAvailability.length) {
-                    response[curDate.format('YYYY-MM-DD')] = dayAvailability;
-                }
+                response[curDate.format('YYYY-MM-DD')] = dayAvailability;
             }
 
             curDate.add({ days: 1 });
@@ -321,31 +331,23 @@ export class Scheduler {
             return availabilities[0];
         }
 
-        const daysIntersection = Object.keys(availabilities[0]).filter((day: string) => {
-            for (let i = 1; i < availabilities.length; i = i + 1) {
-                if (!availabilities[i].hasOwnProperty(day)) {
-                    return false;
-                }
-            }
-            return true;
-        });
+        for (const day of Object.keys(availabilities[0])) {
+            availabilities[0][day] = availabilities[0][day].map((timeAv: TimeAvailability, idx: number) => {
+                if (timeAv.available) {
+                    timeAv.available = availabilities.length === availabilities.filter((days: any) => {
+                        if (days[day] === undefined) {
+                            return false;
+                        }
 
-        const response: Availability = {};
-        for (const day of daysIntersection) {
-            const dayTimesIntersection = availabilities[0][day].filter((time: string) => {
-                for (let i = 1; i < availabilities.length; i = i + 1) {
-                    if (availabilities[i][day].indexOf(time) === -1) {
-                        return false;
-                    }
+                        return 1 === days[day].filter((time: TimeAvailability) => {
+                            return timeAv.time === time.time && time.available;
+                        }).length;
+                    }).length;
                 }
-                return true;
+                return timeAv;
             });
-
-            if (dayTimesIntersection.length > 0) {
-                response[day] = dayTimesIntersection;
-            }
         }
 
-        return response;
+        return availabilities[0];
     }
 }

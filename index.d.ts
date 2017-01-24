@@ -10,6 +10,7 @@ interface WeeklySchedule {
     saturday?: Schedule;
     weekdays?: Schedule;
     unavailability?: Interval[];
+    allocated?: Allocated[];
 }
 
 interface Interval {
@@ -27,8 +28,13 @@ interface Schedule extends Interval {
     unavailability?: Interval[];
 }
 
+interface TimeAvailability {
+    time: string;
+    available: boolean;
+}
+
 export interface Availability {
-    [date: string]: string[];
+    [date: string]: TimeAvailability[];
 }
 
 interface Params {
@@ -36,7 +42,6 @@ interface Params {
     to: string|moment.Moment;
     interval: number;
     duration: number;
-    allocated?: Allocated[];
 }
 
 export interface AvailabilityParams extends Params{
