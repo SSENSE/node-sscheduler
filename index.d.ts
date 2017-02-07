@@ -28,7 +28,7 @@ interface Schedule extends Interval {
     unavailability?: Interval[];
 }
 
-interface TimeAvailability {
+export interface TimeAvailability {
     time: string;
     available: boolean;
 }
