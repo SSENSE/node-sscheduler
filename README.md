@@ -106,6 +106,9 @@ The possible options for the **getAvailability** function are:
        { from: '12:00', to: '13:00' }
      ]
    },
+   custom_schedule: [
+     { "date": "2017-01-23", "from": "12:00", "to": "17:00" },
+   ]
  }
  ```
 </details>

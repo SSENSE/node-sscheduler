@@ -11,11 +11,16 @@ interface WeeklySchedule {
     weekdays?: Schedule;
     unavailability?: Interval[];
     allocated?: Allocated[];
+    custom_schedule?: ScheduleSpecificDate[];
 }
 
 interface Interval {
     from: string|moment.Moment;
     to: string|moment.Moment;
+}
+
+interface ScheduleSpecificDate extends Interval {
+    date: string|moment.Moment;
 }
 
 interface Allocated {

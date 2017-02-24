@@ -57,6 +57,7 @@ export class Scheduler {
         return s;
     }
 
+    // tslint:disable-next-line:max-func-body-length
     protected validateAndCastParams(params: AvailabilityParams): void {
         const p = cloneDeep(params);
 
@@ -131,6 +132,26 @@ export class Scheduler {
 
                 const allocatedMinutes = p.interval * Math.ceil(allocated.duration / p.interval);
                 allocated.to = allocated.from.clone().add({ minutes: allocatedMinutes });
+            }
+        }
+
+        if (p.schedule.custom_schedule) {
+            for (const customSchedule of p.schedule.custom_schedule) {
+                customSchedule.date = moment(customSchedule.date, 'YYYY-MM-DD');
+                if (!customSchedule.date.isValid()) {
+                    throw new Error('custom_schedule "date" must be a date in the format YYYY-MM-DD');
+                }
+
+                customSchedule.from = moment(customSchedule.from, 'HH:mm');
+                customSchedule.to = moment(customSchedule.to, 'HH:mm');
+
+                if (!customSchedule.from.isValid()) {
+                    throw new Error('custom_schedule "from" must be a time in the format HH:mm');
+                } else if (!customSchedule.to.isValid()) {
+                    throw new Error('custom_schedule "to" must be a time in the format HH:mm');
+                } else if (!customSchedule.to.isAfter(customSchedule.from)) {
+                    throw new Error('custom_schedule "to" must be greater than "from"');
+                }
             }
         }
 
@@ -243,6 +264,40 @@ export class Scheduler {
         return true;
     }
 
+    public getScheduleForDay(day: moment.Moment): Schedule {
+        const weekdayName: string = this.daysOfWeek[day.day()];
+        const curYMD = day.format('YYYY-MM-DD');
+        let customSchedule: Schedule = undefined;
+
+        if (this.params.schedule.custom_schedule !== undefined) {
+            const customScheduleForThisDay = this.params.schedule.custom_schedule.filter(
+                (cs: any) => cs.date.format('YYYY-MM-DD') === curYMD
+            );
+            if (customScheduleForThisDay.length) {
+                customSchedule = {
+                    from: customScheduleForThisDay[0].from,
+                    to: customScheduleForThisDay[0].to
+                };
+            }
+        }
+
+        if ((<any> this.params.schedule)[weekdayName] !== undefined) {
+            if (customSchedule !== undefined) {
+                customSchedule.unavailability = (<any> this.params.schedule)[weekdayName].unavailability || [];
+                return customSchedule;
+            }
+            return (<any> this.params.schedule)[weekdayName];
+        } else if (weekdayName !== 'saturday' && weekdayName !== 'sunday' && (<any> this.params.schedule).weekdays !== undefined) {
+            if (customSchedule !== undefined) {
+                customSchedule.unavailability = (<any> this.params.schedule).weekdays.unavailability || [];
+                return customSchedule;
+            }
+            return (<any> this.params.schedule).weekdays;
+        }
+
+        return undefined;
+    }
+
     public getAvailability(p: AvailabilityParams): Availability {
         this.validateAndCastParams(p);
 
@@ -251,16 +306,10 @@ export class Scheduler {
 
         // Loop on each day from <curDate> to <toDate>
         while (curDate.isBefore(this.params.to)) {
-            const dayName: string = this.daysOfWeek[curDate.day()];
+            const daySchedule: Schedule = this.getScheduleForDay(curDate);
 
             // We have a schedule for this day
-            if ((<any> this.params.schedule)[dayName] !== undefined ||
-                (
-                    dayName !== 'saturday' && dayName !== 'sunday' &&
-                    (<any> this.params.schedule).weekdays !== undefined
-                )
-            ) {
-                const daySchedule: Schedule = (<any> this.params.schedule)[dayName] || (<any> this.params.schedule).weekdays;
+            if (daySchedule !== undefined) {
                 const dayAvailability: TimeAvailability[] = [];
 
                 const timeSlotStart = (<moment.Moment> daySchedule.from).clone().year(curDate.year()).dayOfYear(curDate.dayOfYear());
