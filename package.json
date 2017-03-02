@@ -9,7 +9,7 @@
     "test": "npm run test:unit",
     "test:unit": "NODE_ENV=test mocha tests/unit --recursive --compilers ts:ts-node/register --bail",
     "cover": "npm run cover:unit",
-    "cover:unit": "NODE_ENV=test nyc --report-dir tests/coverage/unit npm run test:unit"
+    "cover:unit": "NODE_ENV=test ./node_modules/.bin/nyc --report-dir tests/coverage/unit npm run test:unit"
   },
   "repository": {
     "type": "git",

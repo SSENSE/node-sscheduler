@@ -9,7 +9,7 @@ interface WeeklySchedule {
     friday?: Schedule;
     saturday?: Schedule;
     weekdays?: Schedule;
-    unavailability?: Interval[];
+    unavailability?: Interval[]|ScheduleSpecificDate[];
     allocated?: Allocated[];
     custom_schedule?: ScheduleSpecificDate[];
 }
@@ -19,7 +19,7 @@ interface Interval {
     to: string|moment.Moment;
 }
 
-interface ScheduleSpecificDate extends Interval {
+export interface ScheduleSpecificDate extends Interval {
     date: string|moment.Moment;
 }
 

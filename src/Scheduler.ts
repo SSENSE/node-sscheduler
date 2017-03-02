@@ -4,9 +4,10 @@ import {
     IntersectParams,
     Availability,
     TimeAvailability,
-    Schedule
+    Schedule, ScheduleSpecificDate, Interval
 } from '../index.d';
 import {cloneDeep, omit} from 'lodash';
+import Moment = moment.Moment;
 
 export class Scheduler {
     protected params: AvailabilityParams;
@@ -19,6 +20,37 @@ export class Scheduler {
         'friday',
         'saturday'
     ];
+
+    private convertScheduleSpecificDateToInterval(schedule: ScheduleSpecificDate): Interval {
+        const interval: Interval = {from: null, to: null};
+        const fromDateTime = `${(<Moment> schedule.date).format('YYYY-MM-DD')} ${(<Moment> schedule.from).format('HH:mm')}`;
+        const toDateTime = `${(<Moment> schedule.date).format('YYYY-MM-DD')} ${(<Moment> schedule.to).format('HH:mm')}`;
+        interval.from = moment(fromDateTime, 'YYYY-MM-DD HH:mm');
+        interval.to = moment(toDateTime, 'YYYY-MM-DD HH:mm');
+        return interval;
+    }
+
+    protected validateAndCastScheduleSpecificDate(schedule: ScheduleSpecificDate, propertyName: string): ScheduleSpecificDate {
+        const s: ScheduleSpecificDate = {
+            date: moment(schedule.date, 'YYYY-MM-DD'),
+            from: moment(schedule.from, 'HH:mm'),
+            to: moment(schedule.to, 'HH:mm')
+        };
+
+        if (!(<Moment> s.date).isValid()) {
+            throw new Error(`${propertyName} "date" must be a date in the format YYYY-MM-DD`);
+        }
+
+        if (!(<Moment> s.from).isValid()) {
+            throw new Error(`${propertyName} "from" must be a time in the format HH:mm`);
+        } else if (!(<Moment> s.to).isValid()) {
+            throw new Error(`${propertyName} "to" must be a time in the format HH:mm`);
+        } else if (!(<Moment> s.to).isAfter(s.from)) {
+            throw new Error(`${propertyName} "to" must be greater than "from"`);
+        }
+
+        return s;
+    }
 
     protected validateAndCastDaySchedule(schedule: Schedule): Schedule {
         const s: Schedule = {
@@ -103,16 +135,26 @@ export class Scheduler {
         }
 
         if (p.schedule.unavailability) {
-            for (const unavailability of p.schedule.unavailability) {
-                unavailability.from = moment(unavailability.from, 'YYYY-MM-DD HH:mm');
-                unavailability.to = moment(unavailability.to, 'YYYY-MM-DD HH:mm');
-                if (!unavailability.from.isValid()) {
-                    throw new Error('unavailability "from" must be a date in the format YYYY-MM-DD HH:mm');
-                } else if (!unavailability.to.isValid()) {
-                    throw new Error('unavailability "to" must be a date in the format YYYY-MM-DD HH:mm');
-                } else if (!unavailability.to.isAfter(unavailability.from)) {
-                    throw new Error('unavailability "to" must be greater than "from"');
+
+            for (let i = 0; i < p.schedule.unavailability.length; i += 1) {
+                const unavailability = p.schedule.unavailability[i];
+                let interval: Interval = {from: null, to: null};
+                if ((<ScheduleSpecificDate> unavailability).date !== undefined) {
+                    const s = this.validateAndCastScheduleSpecificDate(<ScheduleSpecificDate> unavailability, 'unavailability');
+                    interval = this.convertScheduleSpecificDateToInterval(s);
+                } else {
+                    interval.from = moment(unavailability.from, 'YYYY-MM-DD HH:mm');
+                    interval.to = moment(unavailability.to, 'YYYY-MM-DD HH:mm');
+
+                    if (!interval.from.isValid()) {
+                        throw new Error('unavailability "from" must be a date in the format YYYY-MM-DD HH:mm');
+                    } else if (!interval.to.isValid()) {
+                        throw new Error('unavailability "to" must be a date in the format YYYY-MM-DD HH:mm');
+                    } else if (!interval.to.isAfter(interval.from)) {
+                        throw new Error('unavailability "to" must be greater than "from"');
+                    }
                 }
+                p.schedule.unavailability[i] = interval;
             }
         }
 
@@ -136,23 +178,9 @@ export class Scheduler {
         }
 
         if (p.schedule.custom_schedule) {
-            for (const customSchedule of p.schedule.custom_schedule) {
-                customSchedule.date = moment(customSchedule.date, 'YYYY-MM-DD');
-                if (!customSchedule.date.isValid()) {
-                    throw new Error('custom_schedule "date" must be a date in the format YYYY-MM-DD');
-                }
-
-                customSchedule.from = moment(customSchedule.from, 'HH:mm');
-                customSchedule.to = moment(customSchedule.to, 'HH:mm');
-
-                if (!customSchedule.from.isValid()) {
-                    throw new Error('custom_schedule "from" must be a time in the format HH:mm');
-                } else if (!customSchedule.to.isValid()) {
-                    throw new Error('custom_schedule "to" must be a time in the format HH:mm');
-                } else if (!customSchedule.to.isAfter(customSchedule.from)) {
-                    throw new Error('custom_schedule "to" must be greater than "from"');
-                }
-            }
+            p.schedule.custom_schedule.forEach((customSchedule, key) => {
+                p.schedule.custom_schedule[key] = this.validateAndCastScheduleSpecificDate(customSchedule, 'custom_schedule');
+            });
         }
 
         if (isNaN(p.interval)) {
