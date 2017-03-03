@@ -119,7 +119,7 @@ describe('getAvailability', () => {
             .to.throw(Error, 'monday: "to" must be greater than "from"');
         });
 
-        it('schedule unavailability validation', () => {
+        it('schedule unavailability validation Interval type', () => {
             expect(scheduler.getAvailability.bind(scheduler, {
                 from: '2017-01-23',
                 to: '2017-01-24',
@@ -215,6 +215,107 @@ describe('getAvailability', () => {
                 duration: 30
             }))
             .to.throw(Error, 'unavailability "to" must be greater than "from"');
+        });
+
+        it('schedule unavailability validation ScheduleSpecificDate type', () => {
+            expect(scheduler.getAvailability.bind(scheduler, {
+                from: '2017-01-23',
+                to: '2017-01-24',
+                schedule: {
+                    monday: {
+                        from: '09:00',
+                        to: '17:00',
+                        unavailability: [{
+                            from: 'test',
+                            to: '13:00'
+                        }]
+                    }
+                },
+                interval: 30,
+                duration: 30
+            }))
+                .to.throw(Error, 'monday: unavailability "from" must be a time in the format HH:mm');
+
+            expect(scheduler.getAvailability.bind(scheduler, {
+                from: '2017-01-23',
+                to: '2017-01-24',
+                schedule: {
+                    monday: {
+                        from: '09:00',
+                        to: '17:00',
+                        unavailability: [{
+                            from: '12:00',
+                            to: 'test'
+                        }]
+                    }
+                },
+                interval: 30,
+                duration: 30
+            }))
+                .to.throw(Error, 'monday: unavailability "to" must be a time in the format HH:mm');
+
+            expect(scheduler.getAvailability.bind(scheduler, {
+                from: '2017-01-23',
+                to: '2017-01-24',
+                schedule: {
+                    monday: {
+                        from: '09:00',
+                        to: '17:00',
+                        unavailability: [{
+                            from: '12:00',
+                            to: '12:00'
+                        }]
+                    }
+                },
+                interval: 30,
+                duration: 30
+            }))
+                .to.throw(Error, 'monday: unavailability "to" must be greater than "from"');
+
+            expect(scheduler.getAvailability.bind(scheduler, {
+                from: '2017-01-23',
+                to: '2017-01-24',
+                schedule: {
+                    unavailability: [{
+                        date: 'test',
+                        from: '12:00',
+                        to: '13:00'
+                    }]
+                },
+                interval: 30,
+                duration: 30
+            }))
+                .to.throw(Error, 'unavailability "date" must be a date in the format YYYY-MM-DD');
+
+            expect(scheduler.getAvailability.bind(scheduler, {
+                from: '2017-01-23',
+                to: '2017-01-24',
+                schedule: {
+                    unavailability: [{
+                        date: '2017-01-23',
+                        from: 'test',
+                        to: '13:00'
+                    }]
+                },
+                interval: 30,
+                duration: 30
+            }))
+                .to.throw(Error, 'unavailability "from" must be a time in the format HH:mm');
+
+            expect(scheduler.getAvailability.bind(scheduler, {
+                from: '2017-01-23',
+                to: '2017-01-24',
+                schedule: {
+                    unavailability: [{
+                        date: '2017-01-23',
+                        from: '10:00',
+                        to: 'test'
+                    }]
+                },
+                interval: 30,
+                duration: 30
+            }))
+                .to.throw(Error, 'unavailability "to" must be a time in the format HH:mm');
         });
 
         it('schedule allocated validation', () => {

@@ -44,7 +44,9 @@ const availability = scheduler.getAvailability({
             ]
         },
         unavailability: [
-            { from: '2017-02-20 00:00', to: '2017-02-27 00:00' }
+            // two different types of unavailability structure
+            { from: '2017-02-20 00:00', to: '2017-02-27 00:00' },
+            { date: '2017-02-15', from: '12:00', to: '13:00' }
         ],
         allocated: [
           { from: '2017-02-01 13:00' , duration: 60 },
