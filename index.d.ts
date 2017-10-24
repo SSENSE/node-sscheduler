@@ -17,6 +17,7 @@ interface WeeklySchedule {
 interface Interval {
     from: string|moment.Moment;
     to: string|moment.Moment;
+    reference?: any;
 }
 
 export interface ScheduleSpecificDate extends Interval {
@@ -36,6 +37,7 @@ interface Schedule extends Interval {
 export interface TimeAvailability {
     time: string;
     available: boolean;
+    reference?: any;
 }
 
 export interface Availability {

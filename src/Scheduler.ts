@@ -55,7 +55,8 @@ export class Scheduler {
     protected validateAndCastDaySchedule(schedule: Schedule): Schedule {
         const s: Schedule = {
             from: moment(schedule.from, 'HH:mm'),
-            to: moment(schedule.to, 'HH:mm')
+            to: moment(schedule.to, 'HH:mm'),
+            reference: schedule.reference || null
         };
 
         if (! (<moment.Moment> s.from).isValid()) {
@@ -71,7 +72,8 @@ export class Scheduler {
             for (const unavailability of schedule.unavailability) {
                 const breakPeriod = {
                     from: moment(unavailability.from, 'HH:mm'),
-                    to: moment(unavailability.to, 'HH:mm')
+                    to: moment(unavailability.to, 'HH:mm'),
+                    reference: unavailability.reference || null
                 };
 
                 if (!breakPeriod.from.isValid()) {
@@ -348,7 +350,8 @@ export class Scheduler {
                     if (this.isTimeAfter(timeSlotEnd, (<moment.Moment> daySchedule.to))) {
                         dayAvailability.push({
                             time: timeSlotStart.format('HH:mm'),
-                            available: false
+                            available: false,
+                            reference: daySchedule.reference
                         });
                         timeSlotStart.add({ minutes: this.params.interval });
                         continue;
@@ -376,7 +379,8 @@ export class Scheduler {
 
                     dayAvailability.push({
                         time: timeSlotStart.format('HH:mm'),
-                        available: isAvailable
+                        available: isAvailable,
+                        reference: daySchedule.reference
                     });
 
                     timeSlotStart.add({ minutes: this.params.interval });
