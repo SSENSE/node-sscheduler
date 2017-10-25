@@ -34,13 +34,13 @@
     "npm": ">= 3"
   },
   "dependencies": {
-    "lodash": "^4.13.1",
+    "lodash": "4.13.1",
     "moment": "^2.17.1"
   },
   "devDependencies": {
     "@ssense/tslint-config": "^4.0.0",
     "@types/chai": "^3.4.34",
-    "@types/lodash": "^4.14.50",
+    "@types/lodash": "4.14.50",
     "@types/mocha": "^2.2.37",
     "@types/node": "^7.0.0",
     "chai": "^3.5.0",
