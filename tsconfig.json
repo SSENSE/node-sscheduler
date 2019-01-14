@@ -1,18 +1,18 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es6",
     "module": "commonjs",
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "inlineSourceMap": false,
-    "inlineSources": false,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "strict": true,
+    "removeComments": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
-    "removeComments": false
+    "alwaysStrict": true
   },
-  "exclude": [
-    "node_modules",
-    "tests"
-  ]
+  "include": ["src/"],
+  "exclude": ["node_modules", "tests", "dist"]
 }

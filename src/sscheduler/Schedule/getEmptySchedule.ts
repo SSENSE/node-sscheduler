@@ -1,0 +1,1 @@
+export default () => ({ availability: [], unavailability: [] })
