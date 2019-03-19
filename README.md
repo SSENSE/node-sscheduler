@@ -19,7 +19,7 @@ npm install @ssense/sscheduler
 
 As an example, let's say that we want to book a 1 hour appointment with a doctor in the month of february considering that:
 
-  * We can only book on weekdays from *9AM* to *5PM*
+  * We can only book on weekdays from *9AM* to *4PM*
 
   * We can't book between noon and *1PM* (lunch time !)
 
