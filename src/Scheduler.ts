@@ -396,7 +396,7 @@ export class Scheduler {
     }
 
     public getIntersection(p: IntersectParams): Availability {
-        const params: AvailabilityParams = <AvailabilityParams>assignIn(
+        const params: AvailabilityParams = <AvailabilityParams> assignIn(
             { schedule: null },
             cloneDeep(omit(p, ['schedules']))
         );
