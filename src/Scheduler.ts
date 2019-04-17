@@ -6,7 +6,7 @@ import {
     TimeAvailability,
     Schedule, ScheduleSpecificDate, Interval
 } from '../index.d';
-import {cloneDeep, omit} from 'lodash';
+import { assignIn, cloneDeep, omit} from 'lodash';
 import Moment = moment.Moment;
 
 export class Scheduler {
@@ -396,7 +396,7 @@ export class Scheduler {
     }
 
     public getIntersection(p: IntersectParams): Availability {
-        const params: AvailabilityParams = <AvailabilityParams> (<any>Object).assign(
+        const params: AvailabilityParams = <AvailabilityParams>assignIn(
             { schedule: null },
             cloneDeep(omit(p, ['schedules']))
         );
