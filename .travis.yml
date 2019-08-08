@@ -1,7 +1,7 @@
 sudo: false
 language: node_js
 node_js:
-  - 5
+  - 6
   - stable
 
 before_install:
@@ -21,7 +21,7 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    node: '5'
+    node: '8'
   email: adminlogin@ssense.com
   api_key:
     secure: dm4QJPlXZt0kdd4C0QB8KbWLyTMJWqt+0XoxDLoPMcZN3hS54q511kQhX561t1phSSsPZAS/oIvYxWvvAqpsQWIiqRJ92IvUqDTb22nqRFvXIX3hDPi1ky3Wq8wP3ankn4rlTObJ/XBfx/MDzbOFLcNNF0CnDideEwz+FpcoZ8ZoaC3pvk13viN3MG71WQMc+/3OtqTQAUZjofJM91GrZ/hWMSOVBPySCN/uDCSL7FqQ+iWK/nh1S5pMNSeMd/lsi9o2acrQhe44PFAbA/eufioHbbuQHHNfCmzWH9k3iYerBeW8ktZ1gOuhw+0fcQ80LlxxbCurIoYxqniBRoqxhnn/yYIuItBS2w67A67M09LzxPEDUuxiCx7oJtJRYXxYXUKVclCzstDUS1sbubinm7OSxycVF/Ep3dKCkJejmVjILrZnyvzFkjmmoo5hYgcitUT+xW0qVh5yKJ8e2vXkPoMYGFz72j3gid4MZ5tFmYSDCkE+uWUVf5HIaZBcBumbY4xD1EBE4kLmCU0fhaATM/Gg/MId9ihnDmmCqV7eEijKXiZD1eqdPR4CXFHraN/Xt2b49SdPTPZLNBn3hykS88MQJYC9HYKSqFN9pVI8fKAq9dbkJFBrGNxwYoFLikYuA5w34ilULfXn3jVWtsQFgzHKn03slIMpaTUN5PRtA2w=

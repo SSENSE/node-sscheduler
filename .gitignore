@@ -1,5 +1,6 @@
 node_modules
 npm-debug.log
+.vscode/
 .idea/
 .nyc_output
 dist

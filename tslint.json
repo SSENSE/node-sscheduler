@@ -1,6 +1,16 @@
 {
-    "extends": "@ssense/tslint-config",
-    "rules": {
-        "chai-vague-errors": false
-    }
+  "extends": ["tslint:latest", "tslint-config-prettier"],
+  "rules": {
+    "interface-name": false,
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-pascal-case",
+      "allow-leading-underscore"
+    ],
+    "no-implicit-dependencies": [true, "dev"],
+    "no-shadowed-variable": false,
+    "curly": [true, "ignore-same-line"]
+  }
 }

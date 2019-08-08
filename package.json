@@ -1,15 +1,16 @@
 {
   "name": "@ssense/sscheduler",
-  "version": "1.3.2",
+  "version": "2.0.0-beta.0",
   "description": "Flexible scheduler to find free time slots in the schedule of a resource",
   "main": "./dist/index.js",
   "scripts": {
-    "compile": "rm -rf dist/* && tsc",
-    "lint": "tslint ./src/{,**/}*.ts ./tests/{,**/}*.ts --format verbose",
-    "test": "npm run test:unit",
-    "test:unit": "NODE_ENV=test mocha tests/unit --recursive --compilers ts:ts-node/register --bail",
+    "test": "npm run test:unit && npm run test:functional",
+    "test:unit": "NODE_ENV=test mocha -r ts-node/register \"__tests__/unit/**/!(.d)*.ts\" --bail",
+    "test:functional": "NODE_ENV=test mocha -r ts-node/register \"__tests__/functional/**/!(.d)*.ts\" --bail",
     "cover": "npm run cover:unit",
-    "cover:unit": "NODE_ENV=test ./node_modules/.bin/nyc --report-dir tests/coverage/unit npm run test:unit"
+    "cover:unit": "NODE_ENV=test ./node_modules/.bin/nyc --report-dir tests/coverage/unit npm run test",
+    "lint": "./node_modules/tslint/bin/tslint --project ./tsconfig.json",
+    "compile": "rm -rf dist/* && tsc"
   },
   "repository": {
     "type": "git",
@@ -25,35 +26,45 @@
     "time-slot"
   ],
   "author": "Mickael Burguet <www.rundef.com>",
+  "contributors": [
+    "Mickael Burguet <www.rundef.com>",
+    "Kyle Khoury"
+  ],
   "publishConfig": {
     "access": "public"
   },
   "license": "MIT",
   "engines": {
-    "node": ">= 6.2.0",
-    "npm": ">= 3"
+    "node": ">= 6.17.1",
+    "npm": ">= 3.10.10"
   },
   "dependencies": {
-    "lodash": "4.13.1",
-    "moment": "^2.17.1"
+    "@types/moment-timezone": "^0.5.9",
+    "moment": "^2.23.0",
+    "moment-timezone": "^0.5.23"
   },
   "devDependencies": {
-    "@ssense/tslint-config": "^4.0.0",
     "@types/chai": "^3.4.34",
-    "@types/lodash": "4.14.50",
     "@types/mocha": "^2.2.37",
     "@types/node": "^7.0.0",
-    "chai": "^3.5.0",
+    "@types/sinon": "^7.0.0",
+    "@types/sinon-chai": "^3.2.2",
+    "chai": "^4.2.0",
+    "chai-each": "0.0.1",
     "coveralls": "^2.11.15",
-    "mocha": "^2.5.3",
-    "nyc": "^8.4.0",
-    "ts-node": "^1.6.1",
-    "tslint": "^4.3.1",
-    "typescript": "2.1.5"
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "prettier": "^1.15.3",
+    "sinon": "^7.2.2",
+    "sinon-chai": "^3.3.0",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.17.0",
+    "typescript": "2.9.1"
   },
   "nyc": {
     "include": [
-      "src/*.ts"
+      "src/**/*.ts"
     ],
     "exclude": [
       "node_modules",
