@@ -6,7 +6,7 @@ import {
     TimeAvailability,
     Schedule, ScheduleSpecificDate, Interval
 } from '../index.d';
-import { cloneDeep, omit} from 'lodash';
+import {cloneDeep, omit} from 'lodash';
 import Moment = moment.Moment;
 
 export class Scheduler {
